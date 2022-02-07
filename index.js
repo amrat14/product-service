@@ -4,7 +4,6 @@ const PORT = process.env.PORT || 8080;
 const mongoose = require("mongoose");
 const Product = require("./Product");
 const jwt = require("jsonwebtoken");
-// const amqp = require("amqplib");
 const isAuthenticated = require("./isAuthenticated");
 // multer
 const path = require("path");
@@ -43,10 +42,10 @@ mongoose
   });
 
 //database connection
-app.set("view engine", "ejs");
-app.get("/upload", (req, res) => {
-  res.render("upload");
-});
+// app.set("view engine", "ejs");
+// app.get("/upload", (req, res) => {
+//   res.render("upload");
+// });
 //
 
 // API for fetching all products
@@ -106,13 +105,16 @@ app.delete("/product/remove/:id", isAuthenticated, async (req, res) => {
   }
 });
 // API for updating product
-app.patch("product/update/:id", isAuthenticated, async (req, res) => {
+app.patch("/product/update/:id", isAuthenticated, async (req, res) => {
   try {
     const updateProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body
+      req.body,
+      {
+        new: true,
+      }
     );
-    if (!req.param.id) {
+    if (!req.params.id) {
       return res.status(400).send();
     } else {
       res.send(updateProduct);
